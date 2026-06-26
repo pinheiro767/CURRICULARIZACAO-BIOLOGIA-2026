@@ -1,83 +1,28 @@
-const weeks=[
-{n:1,t:"Escolha dos temas",g:"Grupos escolhem o tema de saúde reprodutiva e o formato do jogo.",d:"Tema + tipo de game definidos"},
-{n:2,t:"Imagens pelo Canva/IA",g:"Criar identidade visual, telas, fundos e personagens pensando no público idoso.",d:"Assets visuais iniciais"},
-{n:3,t:"HTML por prompts + Google Sites",g:"Gerar o primeiro HTML com IA e publicar no Google Sites para testar o protótipo.",d:"Protótipo navegável"},
-{n:4,t:"GitHub e funcionalidades",g:"Abrir conta, criar repositório e entender GitHub Pages.",d:"Projeto publicado"},
-{n:5,t:"Criar assets finais",g:"Organizar imagens, ícones, vídeos de Libras, áudios e audiodescrições.",d:"Pasta assets pronta"},
-{n:6,t:"Construção dos jogos",g:"Inserir quiz, bolhas, memória, cruzadas ou outro game escolhido.",d:"Game funcional"},
-{n:7,t:"Acessibilidade",g:"Adicionar Libras, áudio, audiodescrição, alto contraste e botões grandes.",d:"Game inclusivo"},
-{n:8,t:"Transformar em PWA",g:"Adicionar manifest, service worker e testar instalação no celular.",d:"PWA instalável"},
-{n:9,t:"Entrega no MUDI",g:"Apresentar, instalar e testar com o público visitante.",d:"PWA aplicado no MUDI"}
-];
+const weeks=[{n:1,t:"Escolha do tema",g:"Escolher tema, público-alvo, tipo de jogo e gerar prompt com características principais.",d:"Prompt + relatório HTML para Google Sites"},{n:2,t:"Imagens no Canva/IA",g:"Criar imagens e telas para colocar no Google Sites como protótipo visual.",d:"Assets visuais iniciais"},{n:3,t:"5 prompts HTML",g:"Criar cinco prompts para gerar protótipos de jogos em HTML e testar no Google Sites.",d:"Protótipos HTML"},{n:4,t:"GitHub",g:"Abrir conta, criar repositório, entender GitHub Pages e publicar primeira versão.",d:"Repositório online"},{n:5,t:"Assets finais",g:"Organizar imagens, ícones, sons, vídeos de Libras, áudios e audiodescrições.",d:"Pasta assets"},{n:6,t:"Funcionalidades do game",g:"Criar pontuação, botões, fases, feedback, reinício e telas de resultado.",d:"Game jogável"},{n:7,t:"Acessibilidade",g:"Adicionar Libras, áudio, audiodescrição, contraste claro/dia e fonte ampliada.",d:"PWA acessível"},{n:8,t:"PWA final",g:"Adicionar manifest, service worker, ícones e testar instalação no iPhone e Android.",d:"App instalável"},{n:9,t:"Entrega no MUDI",g:"Apresentar e aplicar o PWA game com visitantes do MUDI.",d:"Entrega final"}];
+const themes={"🩺 Saúde Reprodutiva e Prevenção":["Métodos contraceptivos","Prevenção de IST","HPV e vacinação","Planejamento reprodutivo","Gravidez saudável","Saúde sexual na adolescência","Saúde sexual na vida adulta","Sexualidade e envelhecimento"],"♀️ Saúde da Mulher":["Ciclo menstrual","Menopausa","Câncer de mama","Câncer de colo do útero","Autocuidado feminino","Saúde íntima feminina"],"♂️ Saúde do Homem":["Saúde da próstata","Câncer de pênis","Saúde íntima masculina","Fertilidade masculina","Autocuidado masculino"],"🧬 Anatomia e Fisiologia":["Sistema reprodutor feminino","Sistema reprodutor masculino","Hormônios e reprodução","Fecundação e desenvolvimento embrionário","Puberdade","Anatomia da gestação"],"❤️ Hábitos Saudáveis":["Alimentação e fertilidade","Exercício físico e saúde reprodutiva","Sono e saúde hormonal","Saúde mental e bem-estar","Prevenção ao uso de álcool, tabaco e drogas"],"👥 Relações e Sociedade":["Consentimento","Relacionamentos saudáveis","Comunicação entre parceiros","Direitos reprodutivos","Violência sexual e prevenção"]};
+const w2=[["Revisar Semana 1","Conferir tema, público-alvo e tipo de jogo escolhidos."],["Criar tela inicial","Imagem clara, acolhedora, com espaço para botão INICIAR."],["Criar menu","Tela com botões grandes para os jogos escolhidos."],["Criar fundo do jogo","Fundo limpo que não atrapalhe leitura de perguntas e respostas."],["Criar mascote/robô","Personagem que orienta o visitante durante o jogo."],["Criar ícones acessíveis","Botões para áudio, Libras, audiodescrição, fonte maior e contraste."],["Planejar Google Sites","Inserir as imagens como protótipo visual provisório."],["Organizar arquivos","Salvar tudo com nomes simples em uma pasta do grupo."],["Registrar entrega","Anotar o que foi produzido e o que falta para a Semana 3."]];let done=JSON.parse(localStorage.getItem("mudi_done")||"[]"),done2=JSON.parse(localStorage.getItem("mudi_w2")||"[]"),soundOn=true;
+function renderWeeks(){weekGrid.innerHTML=weeks.map(w=>`<article class="week-card ${done.includes(w.n)?'done':''}"><span class="badge">Semana ${w.n}</span><h3>${w.t}</h3><p>${w.g}</p><span class="deliver">📦 ${w.d}</span><button class="btn ghost full" onclick="toggleWeek(${w.n})">${done.includes(w.n)?'✅ Concluída':'Marcar semana'}</button></article>`).join('')}
+function renderThemes(){themesBox.innerHTML=Object.entries(themes).map(([cat,items])=>`<div class="cat"><h4>${cat}</h4>${items.map(i=>`<span class="chip" onclick="pickTheme('${i.replaceAll("'","")}')">${i}</span>`).join('')}</div>`).join('')}
+function renderW2(){week2Steps.innerHTML=w2.map((s,i)=>`<article class="step-card ${done2.includes(i+1)?'done':''}"><div class="num">${i+1}</div><div><h3>${s[0]}</h3><p>${s[1]}</p></div><button class="btn ghost" onclick="toggleW2(${i+1})">${done2.includes(i+1)?'✅':'Concluir'}</button></article>`).join('')}
+function toggleWeek(n){done=done.includes(n)?done.filter(x=>x!==n):[...done,n];localStorage.setItem('mudi_done',JSON.stringify(done));renderWeeks();progress();beep()}function toggleW2(n){done2=done2.includes(n)?done2.filter(x=>x!==n):[...done2,n];localStorage.setItem('mudi_w2',JSON.stringify(done2));renderW2();progress();beep()}function progress(){let pct=Math.round((done.length+done2.length)/(weeks.length+w2.length)*100);progressText.textContent=pct+'%';progressFill.style.width=pct+'%'}function pickTheme(t){themeChosen.value=t;beep()}function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});beep()}
+function generateWeek1Prompt(){let g=groupName.value||'grupo de Ciências Biológicas',theme=themeChosen.value||'saúde reprodutiva e autocuidado',target=targetAudience.value,game=gameType.value,style=visualStyle.value;week1Prompt.value=`Atue como designer instrucional, desenvolvedor front-end e educador em saúde. Crie a proposta inicial de um PWA Game educativo para o grupo "${g}", sobre o tema "${theme}", voltado para ${target}, no formato de jogo "${game}". O projeto será aplicado no MUDI/UEM para visitantes de 14 anos até pessoas idosas. O jogo deve ter linguagem simples, conteúdo científico correto, visual ${style}, modo claro/dia, alto contraste, botões grandes e macios, som, acessibilidade com Libras, áudio e audiodescrição, e estrutura que possa primeiro ser apresentada no Google Sites como protótipo e depois transformada em app PWA no GitHub. Inclua: objetivo do jogo, público-alvo, fases, regras, feedback ao jogador, imagens necessárias, sons necessários e cuidados de acessibilidade.`;savePlan();beep()}
+function generateReport(){let g=groupName.value||'Grupo não informado',theme=themeChosen.value||'Tema não informado',target=targetAudience.value,game=gameType.value,style=visualStyle.value;htmlReport.value=`<section style="font-family:Arial;line-height:1.5;padding:20px;border-radius:20px;background:#e0f2fe;color:#082f49"><h1>Relatório Inicial do PWA Game</h1><h2>${g}</h2><p><strong>Tema escolhido:</strong> ${theme}</p><p><strong>Público-alvo:</strong> ${target}</p><p><strong>Tipo de jogo:</strong> ${game}</p><p><strong>Estilo visual:</strong> ${style}</p><h3>Objetivo educativo</h3><p>Criar um jogo digital educativo sobre ${theme}, com linguagem simples e científica, para visitantes do MUDI a partir de 14 anos até idosos.</p><h3>Características do protótipo</h3><ul><li>Visual claro, modo dia e alto contraste.</li><li>Botões grandes e macios.</li><li>Imagens criadas no Canva ou em IA.</li><li>Possibilidade de áudio, Libras e audiodescrição.</li><li>Protótipo provisório no Google Sites.</li><li>Versão final no GitHub como app PWA.</li></ul></section>`;beep()}
+function savePlan(){localStorage.setItem('mudi_plan',JSON.stringify({g:groupName.value,theme:themeChosen.value,target:targetAudience.value,game:gameType.value,style:visualStyle.value}))}function loadPlan(){let p=JSON.parse(localStorage.getItem('mudi_plan')||'{}');if(p.g)groupName.value=p.g;if(p.theme)themeChosen.value=p.theme;if(p.target)targetAudience.value=p.target;if(p.game)gameType.value=p.game;if(p.style)visualStyle.value=p.style}
+function generateImagePrompt(){let theme=themeChosen.value||'saúde reprodutiva e autocuidado',target=targetAudience.value,game=gameType.value;imagePrompt.value=`Crie uma imagem em formato 16:9 para ${imageAsset.value} de um PWA Game educativo sobre ${theme}, no formato ${game}, voltado para ${target}. A imagem deve funcionar em iPhone e Android, ter modo claro/dia, alto contraste, visual imersivo, colorido, limpo, com botões grandes, aparência moderna, poucas informações, leitura fácil e estilo adequado para visitantes do MUDI de 14 anos até idosos. Não use conteúdo explícito. Representar saúde, prevenção, autocuidado e Biologia de forma respeitosa e educativa. Cores principais: ${imageColors.value}.`;beep()}
+function generateFiveHtmlPrompts(){let theme=themeChosen.value||'saúde reprodutiva e autocuidado',target=targetAudience.value;fivePrompts.value=`PROMPT 1 — QUIZ HTML
+Crie um único arquivo HTML com CSS e JavaScript integrados para um Quiz educativo sobre ${theme}, voltado para ${target}. Deve ter modo claro/dia, alto contraste, botões grandes, som de acerto/erro, pontuação, feedback e layout responsivo para iPhone e Android.
 
-const themes={
-"🩺 Saúde Reprodutiva e Prevenção":["Métodos contraceptivos","Prevenção de IST","HPV e vacinação","Planejamento reprodutivo","Gravidez saudável","Saúde sexual na adolescência","Saúde sexual na vida adulta","Sexualidade e envelhecimento"],
-"♀️ Saúde da Mulher":["Ciclo menstrual","Menopausa","Câncer de mama","Câncer de colo do útero","Autocuidado feminino","Saúde íntima feminina"],
-"♂️ Saúde do Homem":["Saúde da próstata","Câncer de pênis","Saúde íntima masculina","Fertilidade masculina","Autocuidado masculino"],
-"🧬 Anatomia e Fisiologia":["Sistema reprodutor feminino","Sistema reprodutor masculino","Hormônios e reprodução","Fecundação e desenvolvimento embrionário","Puberdade","Anatomia da gestação"],
-"❤️ Hábitos Saudáveis":["Alimentação e fertilidade","Exercício físico e saúde reprodutiva","Sono e saúde hormonal","Saúde mental e bem-estar","Prevenção ao uso de álcool, tabaco e drogas"],
-"👥 Relações e Sociedade":["Consentimento","Relacionamentos saudáveis","Comunicação entre parceiros","Direitos reprodutivos","Violência sexual e prevenção"]
-};
-const formats=["Quiz","Jogo da Memória","Caça-palavras","Palavras cruzadas","Escape room","Jogo de escolhas","Tabuleiro digital","Perguntas e respostas","Jogo de associação","Quebra-cabeça","Bubble/Bolhas"];
-const steps=[
-["Missão do dia","Hoje não é programação. Hoje é criar o visual do PWA Game e deixar os grupos menos perdidos com prompts."],
-["Público idoso","Toda imagem deve ter leitura fácil, alto contraste, poucos elementos, botões grandes e visual acolhedor."],
-["Identidade visual","Definir cores, estilo, nome do jogo, mascote e sensação visual do aplicativo."],
-["Tela inicial","Criar uma imagem 16:9 com aparência de app e espaço para botão INICIAR."],
-["Menu dos jogos","Criar uma tela com espaço para botões: Quiz, Bolhas, Memória, Cruzadas, Caça-palavras ou outro."],
-["Fundos dos games","Criar fundos limpos para as fases. Eles não podem competir com perguntas, botões e letras."],
-["Mascotes e robô tutor","Criar personagem guia do app. Ele pode explicar dicas, acessibilidade e missão da semana."],
-["Libras e áudio","Planejar onde entrarão os vídeos dos intérpretes, narração e audiodescrição dentro do game."],
-["Organização final","Salvar tudo com nomes simples: logo.png, tela-inicial.png, menu.png, quiz.png, libras-hpv.mp4."]
-];
+PROMPT 2 — JOGO DE BOLHAS HTML
+Crie um único arquivo HTML com CSS e JavaScript integrados para um jogo de bolhas educativo sobre ${theme}. O jogador deve clicar na bolha correta. Deve ter bolhas grandes, coloridas, som, feedback visual, botões macios e acessibilidade.
 
-let done=JSON.parse(localStorage.getItem("done3d")||"[]");
-let done2=JSON.parse(localStorage.getItem("doneWeek2_3d")||"[]");
+PROMPT 3 — PALAVRAS CRUZADAS HTML
+Crie um único arquivo HTML com CSS e JavaScript integrados para palavras cruzadas sobre ${theme}. Usar letras grandes, alto contraste, dicas simples, botão verificar, feedback e layout responsivo.
 
-function renderWeeks(){
- const el=document.getElementById("weekGrid");
- el.innerHTML=weeks.map(w=>`<article class="week-card ${done.includes(w.n)?"done":""}">
- <span class="tag">Semana ${w.n}</span><h3>${w.t}</h3><p>${w.g}</p><span class="deliver">📦 ${w.d}</span>
- <button class="check" onclick="toggleWeek(${w.n})">${done.includes(w.n)?"✅ Concluída":"Marcar missão"}</button></article>`).join("");
-}
-function renderThemes(){
- document.getElementById("themes").innerHTML=Object.entries(themes).map(([c,arr])=>`<div class="cat"><h4>${c}</h4>${arr.map(i=>`<span class="chip" onclick="pickTheme('${i.replaceAll("'","")}')">${i}</span>`).join("")}</div>`).join("");
- document.getElementById("formats").innerHTML=formats.map(f=>`<span class="chip" onclick="pickFormat('${f}')">${f}</span>`).join("");
-}
-function renderSteps(){
- document.getElementById("week2Steps").innerHTML=steps.map((s,i)=>`<article class="mission-step ${done2.includes(i+1)?"done":""}">
- <div class="num">${i+1}</div><div><h3>${s[0]}</h3><p>${s[1]}</p>${i==8?"<ul><li>logo.png</li><li>tela-inicial.png</li><li>menu.png</li><li>fundo-jogo.png</li><li>personagem-biobot.png</li><li>video-libras.mp4</li></ul>":""}</div>
- <button class="check" onclick="toggleStep(${i+1})">${done2.includes(i+1)?"✅":"Concluir"}</button></article>`).join("");
-}
-function toggleWeek(n){done=done.includes(n)?done.filter(x=>x!==n):[...done,n];localStorage.setItem("done3d",JSON.stringify(done));renderWeeks();progress()}
-function toggleStep(n){done2=done2.includes(n)?done2.filter(x=>x!==n):[...done2,n];localStorage.setItem("doneWeek2_3d",JSON.stringify(done2));renderSteps();progress()}
-function progress(){let p=Math.round((done.length+done2.length)/(weeks.length+steps.length)*100);document.getElementById("progressText").textContent=p+"%";document.getElementById("progressFill").style.width=p+"%"}
-function pickTheme(t){document.getElementById("chosenTheme").value=t}
-function pickFormat(f){document.getElementById("chosenFormat").value=f}
-function savePlan(){let plan={g:groupName.value,t:chosenTheme.value,f:chosenFormat.value};localStorage.setItem("plan3d",JSON.stringify(plan));planSaved.textContent=`✅ Plano salvo: ${plan.g||"Grupo"} • ${plan.t||"tema"} • ${plan.f||"jogo"}`}
-function loadPlan(){let p=JSON.parse(localStorage.getItem("plan3d")||"{}");groupName.value=p.g||"";chosenTheme.value=p.t||"";chosenFormat.value=p.f||""}
-function generatePrompt(){
- const asset=document.getElementById("asset").value, st=document.getElementById("style").value, colors=document.getElementById("colors").value;
- const theme=chosenTheme.value||"saúde reprodutiva, prevenção e autocuidado"; const game=chosenFormat.value||"PWA game educativo";
- promptOutput.value=`Crie uma imagem em formato 16:9 para ${asset} de um ${game} sobre ${theme}, voltado para pessoas idosas visitantes do MUDI. Visual ${st}, cores ${colors}, interface imersiva, botões grandes e macios, alto contraste, poucos textos, leitura fácil, aparência de aplicativo PWA moderno, educativo e acolhedor. Não usar conteúdo explícito; representar saúde, biologia, autocuidado e inclusão de forma respeitosa.`;
-}
-async function copyPrompt(){if(!promptOutput.value)generatePrompt();await navigator.clipboard.writeText(promptOutput.value);botSay("copiado")}
-function goTo(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
-function toggleBot(){document.getElementById("chatbot").classList.toggle("open")}
-function botSay(kind){
- document.getElementById("chatbot").classList.add("open");
- const answers={
- hoje:"Hoje a turma deve criar as imagens do jogo no Canva ou em IA. O foco é: público idoso, botões grandes, alto contraste, visual limpo, personagens guias e fundos para os jogos.",
- prompt:"Um bom prompt precisa dizer: tipo de imagem, tema, público idoso, estilo visual, cores, alto contraste, poucos textos e que será usado em um PWA Game.",
- libras:"Os intérpretes podem gravar vídeos curtos. No PWA, cada fase pode ter o botão 🤟 Libras, que abre o vídeo real. O mascote em desenho apenas orienta o usuário.",
- diferencial:"O aluno que participa desse projeto aprende Anatomia aplicada, extensão universitária, divulgação científica, acessibilidade, criação de games, IA, HTML, GitHub e PWA. Isso diferencia sua formação em Biologia porque ele não apenas estuda conteúdo: ele transforma ciência em tecnologia social para o público.",
- copiado:"Prompt copiado. Agora cole no Canva, ChatGPT Imagens, Gemini ou outra ferramenta de imagem."
- };
- chatBody.innerHTML += `<p><b>BioBot:</b> ${answers[kind]||answers.hoje}</p>`;
- chatBody.scrollTop=chatBody.scrollHeight;
-}
-let deferredPrompt;
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e});
-installBtn.addEventListener("click",async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert("No celular, toque no menu do navegador e escolha Adicionar à tela inicial.")});
-if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
-renderWeeks();renderThemes();renderSteps();loadPlan();progress();generatePrompt();
+PROMPT 4 — JOGO DA MEMÓRIA HTML
+Crie um único arquivo HTML com CSS e JavaScript integrados para jogo da memória sobre ${theme}. Usar cartas grandes, ícones/imagens educativas, pontuação, tentativas, som e feedback.
+
+PROMPT 5 — MENU PWA HTML
+Crie um único arquivo HTML com CSS e JavaScript integrados para a tela inicial de um PWA Game sobre ${theme}. Deve ter menu com Quiz, Bolhas, Memória e Cruzadas, botão de áudio, botão Libras, botão audiodescrição, modo contraste e visual imersivo claro.`;beep()}
+async function copyText(id){let t=document.getElementById(id).value;if(!t)return;await navigator.clipboard.writeText(t);bot('copiado');beep()}function toggleContrast(){document.body.classList.toggle('dark');beep()}function toggleSound(){soundOn=!soundOn;bot(soundOn?'som_on':'som_off')}function beep(){if(!soundOn)return;let ctx=new (window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=660;gain.gain.value=.035;osc.start();setTimeout(()=>{osc.stop();ctx.close()},90)}function demoSpeak(){speak('Este é um exemplo de áudio no PWA. O jogo poderá narrar perguntas e instruções para visitantes do MUDI.')}function speak(txt){if(!('speechSynthesis' in window)){alert('Este navegador não suporta fala.');return}let u=new SpeechSynthesisUtterance(txt);u.lang='pt-BR';u.rate=.92;speechSynthesis.cancel();speechSynthesis.speak(u)}function toggleBot(){botPanel.classList.toggle('open')}
+function bot(type){botPanel.classList.add('open');let msg={resumo:'O projeto é um PWA Game de saúde reprodutiva para visitantes do MUDI, de 14 anos até idosos. Primeiro os alunos criam tema, prompts, imagens e protótipos no Google Sites. Depois publicam o app real no GitHub como PWA.',semana1:'Na Semana 1, o grupo escolhe tema, público-alvo, tipo de jogo e gera um prompt inicial. Ao final, gera um relatório HTML simples para colocar no Google Sites.',semana2:'Na Semana 2, o grupo cria as imagens do jogo no Canva ou IA: tela inicial, menu, fundos, mascote e botões de acessibilidade.',semana3:'Na Semana 3, o grupo cria cinco prompts em HTML para protótipos de jogos e testa no Google Sites.',github:'Da Semana 4 em diante, os alunos abrem GitHub, sobem o projeto, aprendem funcionalidades, assets, acessibilidade e transformam tudo em PWA.',diferencial:'O diferencial é que o aluno de Biologia aprende Anatomia aplicada, educação em saúde, extensão, tecnologia, IA, games, acessibilidade, GitHub e PWA. Ele deixa de apenas estudar conteúdo e passa a criar tecnologia educativa para a comunidade.',libras:'Os intérpretes podem gravar vídeos curtos. No app, cada fase pode ter um botão Libras que abre o vídeo. Isso mantém o projeto viável e inclusivo.',ad:'A audiodescrição explica o que aparece na tela, como botões, imagens e instruções do jogo.',copiado:'Conteúdo copiado. Agora cole no Google Sites, Canva, ChatGPT ou Gemini.',som_on:'Som ativado.',som_off:'Som desativado.'}[type]||'Posso explicar qualquer etapa do PWA Game.';botBody.innerHTML+=`<p><b>BioBot:</b> ${msg}</p>`;botBody.scrollTop=botBody.scrollHeight;if(type==='resumo')speak('O projeto é um PWA Game de saúde reprodutiva para visitantes do MUDI, de 14 anos até idosos.')}
+let deferredPrompt;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e});installBtn.addEventListener('click',async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('No iPhone: compartilhar e Adicionar à Tela de Início. No Android: menu do navegador e Instalar app.')});if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js'))}renderWeeks();renderThemes();renderW2();loadPlan();progress();generateWeek1Prompt();generateImagePrompt();generateFiveHtmlPrompts();
