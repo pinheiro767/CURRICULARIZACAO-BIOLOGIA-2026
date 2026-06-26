@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#6d28d9">
+  <meta name="description" content="PWA Game imersivo de Saúde Reprodutiva para curricularização, extensão em Biologia e MUDI/UEM.">
+  <title>BioRepro Game Lab 3D</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="scene-bg" aria-hidden="true">
+    <span class="bubble b1"></span><span class="bubble b2"></span><span class="bubble b3"></span>
+    <span class="bubble b4"></span><span class="bubble b5"></span><span class="bubble b6"></span>
+    <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+  </div>
+
+  <a href="#main" class="skip">Pular para conteúdo</a>
+
+  <header class="app-header">
+    <nav class="nav-3d">
+      <div class="brand-3d">
+        <div class="brand-cube">🧬</div>
+        <div>
+          <strong>BioRepro Game Lab</strong>
+          <small>PWA Game • Biologia • Curricularização • MUDI</small>
+        </div>
+      </div>
+      <button id="installBtn" class="pill-btn install">📲 Instalar App</button>
+    </nav>
+
+    <section class="hero-3d">
+      <div class="hero-copy">
+        <span class="tag">Semana 2 ativa • Imagens pelo Canva/IA</span>
+        <h1>Construa um PWA Game imersivo sobre Saúde Reprodutiva</h1>
+        <p>
+          Um app em formato de jogo, responsivo e acessível, criado por estudantes de Ciências Biológicas
+          para aplicação no MUDI com público jovem, adulto e idoso.
+        </p>
+
+        <div class="hero-buttons">
+          <button class="soft-3d primary" onclick="goTo('weeks')">🚀 Ver 9 semanas</button>
+          <button class="soft-3d pink" onclick="goTo('week2')">🎨 Aula de hoje</button>
+          <button class="soft-3d blue" onclick="botSay('diferencial')">🤖 Diferencial do aluno</button>
+        </div>
+      </div>
+
+      <div class="phone-3d">
+        <div class="phone-top"></div>
+        <div class="phone-screen">
+          <div class="game-title">Missão Saúde</div>
+          <div class="mini-avatar">🤖</div>
+          <button>Quiz</button>
+          <button>Bolhas</button>
+          <button>Cruzadas</button>
+          <button>Memória</button>
+          <div class="access-row">🤟 🔊 👁 🔠</div>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <main id="main">
+    <section class="progress-card">
+      <div>
+        <h2>Progresso do projeto</h2>
+        <p>Marque as missões concluídas. O navegador salva automaticamente.</p>
+      </div>
+      <div class="progress-area">
+        <b id="progressText">0%</b>
+        <div class="progress"><div id="progressFill"></div></div>
+      </div>
+    </section>
+
+    <section class="section" id="weeks">
+      <div class="section-title">
+        <span class="tag">Roteiro oficial</span>
+        <h2>9 semanas para entregar o PWA Game no MUDI</h2>
+      </div>
+      <div class="week-grid" id="weekGrid"></div>
+    </section>
+
+    <section class="section" id="week1">
+      <div class="section-title">
+        <span class="tag">Semana 1</span>
+        <h2>Escolha dos temas e dos jogos</h2>
+        <p>Os grupos escolhem um tema de saúde reprodutiva e um formato de game.</p>
+      </div>
+
+      <div class="split">
+        <article class="glass-3d">
+          <h3>🩺 Temas possíveis</h3>
+          <div id="themes"></div>
+        </article>
+
+        <article class="glass-3d">
+          <h3>🎮 Formatos de jogos</h3>
+          <div class="chips" id="formats"></div>
+
+          <div class="form-zone">
+            <label>Nome do grupo</label>
+            <input id="groupName" placeholder="Ex.: Guardiões da Saúde">
+            <label>Tema escolhido</label>
+            <input id="chosenTheme" placeholder="Clique em um tema ou digite">
+            <label>Formato de jogo</label>
+            <input id="chosenFormat" placeholder="Quiz, bolhas, cruzadas...">
+            <button class="soft-3d primary full" onclick="savePlan()">💾 Salvar plano do grupo</button>
+            <p id="planSaved"></p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section current-week" id="week2">
+      <div class="section-title">
+        <span class="tag hot">Semana 2 • Hoje</span>
+        <h2>Montar imagens no Canva ou em IA</h2>
+        <p>
+          Hoje os alunos criam imagens do jogo pensando em pessoas idosas:
+          botões grandes, alto contraste, visual acolhedor e leitura fácil.
+        </p>
+      </div>
+
+      <div class="mission-board" id="week2Steps"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="tag">Laboratório de Prompts</span>
+        <h2>Gerador interativo para Canva, ChatGPT Imagens ou Gemini</h2>
+      </div>
+
+      <div class="prompt-studio glass-3d">
+        <div class="controls">
+          <label>Imagem que será criada</label>
+          <select id="asset">
+            <option>Tela inicial do app</option>
+            <option>Tela de menu dos jogos</option>
+            <option>Fundo do Quiz</option>
+            <option>Fundo do jogo de Bolhas</option>
+            <option>Fundo das Palavras Cruzadas</option>
+            <option>Fundo do Jogo da Memória</option>
+            <option>Personagem robô tutor</option>
+            <option>Personagem guia em Libras</option>
+            <option>Botões de acessibilidade</option>
+          </select>
+
+          <label>Estilo</label>
+          <select id="style">
+            <option>3D colorido, macio e educativo</option>
+            <option>desenho animado moderno e acolhedor</option>
+            <option>infográfico científico com alto contraste</option>
+            <option>interface de game mobile com profundidade 3D</option>
+          </select>
+
+          <label>Cores</label>
+          <input id="colors" value="roxo, azul, verde água, rosa e branco">
+
+          <button class="soft-3d primary full" onclick="generatePrompt()">✨ Gerar prompt</button>
+        </div>
+
+        <div class="output">
+          <h3>Prompt pronto</h3>
+          <textarea id="promptOutput" readonly></textarea>
+          <button class="soft-3d blue full" onclick="copyPrompt()">📋 Copiar</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section impact">
+      <div class="section-title">
+        <span class="tag">Diferencial formativo</span>
+        <h2>Por que esse projeto fortalece o aluno de Biologia?</h2>
+      </div>
+
+      <div class="impact-grid">
+        <div class="impact-card">🧬 <b>Anatomia aplicada</b><span>Transforma conteúdo científico em linguagem simples.</span></div>
+        <div class="impact-card">🎮 <b>Gameficação</b><span>Cria jogos educativos para ensinar saúde.</span></div>
+        <div class="impact-card">🤟 <b>Inclusão</b><span>Integra Libras, áudio, contraste e acessibilidade.</span></div>
+        <div class="impact-card">📱 <b>Tecnologia</b><span>Aprende HTML, GitHub, PWA e publicação web.</span></div>
+        <div class="impact-card">🏛️ <b>Extensão</b><span>Leva conhecimento para visitantes do MUDI.</span></div>
+        <div class="impact-card">🧠 <b>Autonomia</b><span>Aprende a usar IA, prompts e prototipagem.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <button class="robot-float" onclick="toggleBot()" aria-label="Abrir robô chat">
+    <span class="robot-face">🤖</span>
+    <span class="robot-ping"></span>
+  </button>
+
+  <aside class="chatbot" id="chatbot">
+    <div class="chat-head">
+      <div><b>🤖 BioBot</b><small>Tutor do PWA Game</small></div>
+      <button onclick="toggleBot()">×</button>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <p><b>BioBot:</b> Olá! Eu explico as semanas, ajudo com prompts e mostro por que este projeto é importante para a formação em Biologia.</p>
+    </div>
+    <div class="chat-actions">
+      <button onclick="botSay('hoje')">O que fazer hoje?</button>
+      <button onclick="botSay('prompt')">Como criar prompt?</button>
+      <button onclick="botSay('libras')">Como usar Libras?</button>
+      <button onclick="botSay('diferencial')">Diferencial do aluno</button>
+    </div>
+  </aside>
+
+  <nav class="dock">
+    <button onclick="goTo('weeks')">📅</button>
+    <button onclick="goTo('week1')">1️⃣</button>
+    <button onclick="goTo('week2')">2️⃣</button>
+    <button onclick="botSay('hoje')">🤖</button>
+  </nav>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
