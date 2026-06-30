@@ -1,8 +1,6 @@
-# MUDI BioRepro Game Lab
+# MUDI Saúde Reprodutiva Game
 
-PWA Game de Saúde Reprodutiva para visitantes do MUDI, de 14 anos até idosos.
-
-Inclui modo claro/dia, contraste, som, BioBot, gerador de prompt, relatório HTML para Google Sites e cronograma até entrega no MUDI.
+PWA completo com botões macios, fundo com bolhas flutuantes, BioBot, som, área para Libras, upload de fotos e relatório científico em PDF.
 
 ## GitHub Pages
-Envie todos os arquivos para um repositório e ative Settings > Pages.
+Envie todos os arquivos para a raiz do repositório e ative Settings > Pages > Deploy from branch > main > root.
